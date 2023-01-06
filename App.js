@@ -38,7 +38,7 @@ const App = () => {
         screenOptions={{
           headerShown: false,
         }}>
-        {/* <Stack.Screen name="Home" component={Home} /> */}
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Result" component={Result} />
       </Stack.Navigator>
     </NavigationContainer>

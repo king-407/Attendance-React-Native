@@ -4,14 +4,13 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import PieChart from 'react-native-pie-chart';
 import {ScrollView} from 'react-native-gesture-handler';
-// import Lottie from 'lottie-react-native';
-// const [loading, setLoading] = useState(true);
+import Lottie from 'lottie-react-native';
 
 const Result = () => {
   const [num, setNum] = useState(0);
   const [den, setDen] = useState(0);
   const [record, setRecord] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   const getData = () => {
     let numerator = 0;
     let denominator = 0;
@@ -34,17 +33,18 @@ const Result = () => {
         setDen(denominator);
 
         setRecord(data);
-        // setLoading(false);
+
+        setLoading(false);
       });
   };
   const sliceColor = ['red', 'green'];
-  const series = [120, 34];
+  const series = [num, den];
   useEffect(() => {
     getData();
   }, []);
-  // if (loading) {
-  //   return <Lottie source={require('../Images/loader.json')} autoPlay />;
-  // }
+  if (loading) {
+    return <Lottie source={require('../Images/loader.json')} autoPlay />;
+  }
   return (
     <ScrollView>
       <View style={{flex: 1}}>
@@ -62,9 +62,12 @@ const Result = () => {
         </Text>
         <View>
           {record.map(student => {
-            console.log(student);
+            console.log(student.Present);
             return (
               <TouchableOpacity
+                onPress={() => {
+                  console.log(student);
+                }}
                 key={student.id}
                 style={{
                   marginTop: 20,
@@ -95,11 +98,12 @@ const Result = () => {
                       fontSize: 17,
                       fontWeight: '700',
                     }}>
-                    Attendance : {student.Present + '/' + student.Total}
+                    Attendance :{' '}
+                    {Math.round((student.Present / student.Total) * 100)}
                   </Text>
                 </View>
-                {/* <View style={{padding: 5, position: 'absolute', right: 40}}> */}
-                {/* <PieChart
+                <View style={{padding: 5, position: 'absolute', right: 40}}>
+                  <PieChart
                     widthAndHeight={100}
                     series={[student.Present, student.Total]}
                     sliceColor={sliceColor}
@@ -107,8 +111,8 @@ const Result = () => {
                     coverRadius={0.6}
                     coverFill={'#FFF'}
                     style={{alignSelf: 'center', marginTop: 20}}
-                  /> */}
-                {/* </View> */}
+                  />
+                </View>
               </TouchableOpacity>
             );
           })}
