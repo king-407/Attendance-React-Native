@@ -6,7 +6,7 @@ import auth from '@react-native-firebase/auth';
 import Login from './screens/Login';
 import Register from './screens/Register';
 import Home from './Content/Home';
-
+import Result from './Content/Result';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -38,7 +38,8 @@ const App = () => {
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen name="Home" component={Home} />
+        {/* <Stack.Screen name="Home" component={Home} /> */}
+        <Stack.Screen name="Result" component={Result} />
       </Stack.Navigator>
     </NavigationContainer>
   );
