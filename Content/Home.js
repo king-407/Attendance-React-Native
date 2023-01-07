@@ -73,7 +73,7 @@ const Home = ({navigation}) => {
             fontSize: 19,
             justifyContent: 'center',
           }}
-          placeholder="Subject Name"
+          placeholder="Total Present"
           value={present}
           onChangeText={text => setPresent(text)}></TextInput>
       </View>
@@ -89,7 +89,7 @@ const Home = ({navigation}) => {
             fontSize: 19,
             justifyContent: 'center',
           }}
-          placeholder="Subject Name"
+          placeholder="Total Classes"
           value={total}
           onChangeText={text => setTotal(text)}></TextInput>
       </View>

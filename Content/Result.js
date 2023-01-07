@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, StatusBar} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -11,6 +11,19 @@ const Result = () => {
   const [den, setDen] = useState(0);
   const [record, setRecord] = useState([]);
   const [loading, setLoading] = useState(true);
+  const handleDelete = student => {
+    console.log(student);
+    firestore()
+      .collection('Attendance')
+      .doc(auth().currentUser.uid)
+      .collection('haajri')
+      .doc(student.id)
+      .delete()
+      .then(() => {
+        console.log('User deleted!');
+      });
+    // setLoading(true);
+  };
   const getData = () => {
     let numerator = 0;
     let denominator = 0;
@@ -20,8 +33,6 @@ const Result = () => {
       .doc(auth().currentUser.uid)
       .collection('haajri')
       .onSnapshot(query => {
-        // console.log(query);
-
         let data = [];
         query.forEach(documentSnapshot => {
           data.push({...documentSnapshot.data(), id: documentSnapshot.id});
@@ -35,6 +46,8 @@ const Result = () => {
         setRecord(data);
 
         setLoading(false);
+        console.log(num);
+        console.log(den);
       });
   };
   const sliceColor = ['red', 'green'];
@@ -62,11 +75,28 @@ const Result = () => {
         </Text>
         <View>
           {record.map(student => {
-            console.log(student.Present);
             return (
               <TouchableOpacity
-                onPress={() => {
-                  console.log(student);
+                onLongPress={() => {
+                  Alert.alert(
+                    'Do you want to delete the subject',
+                    'ok',
+                    [
+                      {
+                        text: 'Yes',
+                        onPress: () => handleDelete(student),
+                      },
+
+                      {
+                        text: 'No',
+                        onPress: () => console.log('No button clicked'),
+                        style: 'cancel',
+                      },
+                    ],
+                    {
+                      cancelable: true,
+                    },
+                  );
                 }}
                 key={student.id}
                 style={{
@@ -90,6 +120,16 @@ const Result = () => {
                       fontWeight: 'bold',
                     }}>
                     {student.Subject}
+                  </Text>
+                  <Text
+                    style={{
+                      marginLeft: 12,
+                      marginTop: 12,
+                      fontSize: 17,
+                      fontWeight: '700',
+                    }}>
+                    Your Attendance
+                    {' ' + student.Present + '/' + student.Total}
                   </Text>
                   <Text
                     style={{
