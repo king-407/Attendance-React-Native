@@ -101,7 +101,7 @@ const Result = () => {
                 key={student.id}
                 style={{
                   marginTop: 20,
-                  height: 150,
+                  height: 190,
                   width: 350,
                   backgroundColor: 'white',
                   borderRadius: 35,
@@ -141,6 +141,38 @@ const Result = () => {
                     Attendance :{' '}
                     {Math.round((student.Present / student.Total) * 100)}
                   </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      padding: 5,
+                      marginTop: 10,
+                      margin: 5,
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        padding: 10,
+                        backgroundColor: 'green',
+                        borderRadius: 5,
+                        marginLeft: 15,
+                      }}>
+                      <Text
+                        style={{color: 'white', fontWeight: '800', padding: 5}}>
+                        Present
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        padding: 10,
+                        backgroundColor: 'red',
+                        borderRadius: 5,
+                        marginLeft: 15,
+                      }}>
+                      <Text
+                        style={{color: 'white', fontWeight: '800', padding: 5}}>
+                        Absent
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
                 <View style={{padding: 5, position: 'absolute', right: 40}}>
                   <PieChart
