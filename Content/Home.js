@@ -33,9 +33,8 @@ const Home = ({navigation}) => {
     } catch (error) {
       console.log(error);
     }
-
-    console.log(present);
   };
+
   return (
     <View style={{flex: 1, marginTop: 30}}>
       <Lottie

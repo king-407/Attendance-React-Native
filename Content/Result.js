@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import PieChart from 'react-native-pie-chart';
 import {ScrollView} from 'react-native-gesture-handler';
+import {firebase} from '@react-native-firebase/firestore';
 import Lottie from 'lottie-react-native';
 
 const Result = () => {
@@ -11,6 +12,8 @@ const Result = () => {
   const [den, setDen] = useState(0);
   const [record, setRecord] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [per, setPer] = useState(0);
+
   const handleDelete = student => {
     console.log(student);
     firestore()
@@ -22,12 +25,44 @@ const Result = () => {
       .then(() => {
         console.log('User deleted!');
       });
-    // setLoading(true);
+    setLoading(true);
   };
-  const getData = () => {
-    let numerator = 0;
-    let denominator = 0;
 
+  const handlePresent = student => {
+    const db = firebase.firestore();
+
+    db.collection('Attendance')
+      .doc(auth().currentUser.uid)
+      .collection('haajri')
+      .doc(student.id)
+      .update({
+        Present: parseInt(student.Present) + 1,
+        Total: parseInt(student.Total) + 1,
+      })
+      .then(() => {});
+    Alert.alert('You have been marked present in ' + student.Subject);
+    setLoading(true);
+  };
+
+  const handleAbsent = student => {
+    const db = firebase.firestore();
+
+    db.collection('Attendance')
+      .doc(auth().currentUser.uid)
+      .collection('haajri')
+      .doc(student.id)
+      .update({
+        Present: parseInt(student.Present),
+        Total: parseInt(student.Total) + 1,
+      })
+      .then(() => {});
+    Alert.alert('You have been marked absent in ' + student.Subject);
+    setLoading(true);
+  };
+
+  const getData = () => {
+    numerator = 0;
+    let denominator = 0;
     firestore()
       .collection('Attendance')
       .doc(auth().currentUser.uid)
@@ -44,12 +79,10 @@ const Result = () => {
         setDen(denominator);
 
         setRecord(data);
-
         setLoading(false);
-        console.log(num);
-        console.log(den);
       });
   };
+
   const sliceColor = ['red', 'green'];
   const series = [num, den];
   useEffect(() => {
@@ -58,6 +91,7 @@ const Result = () => {
   if (loading) {
     return <Lottie source={require('../Images/loader.json')} autoPlay />;
   }
+  console.log(num, den);
   return (
     <ScrollView>
       <View style={{flex: 1}}>
@@ -71,7 +105,7 @@ const Result = () => {
           style={{alignSelf: 'center', marginTop: 30}}
         />
         <Text style={{position: 'absolute', top: 138, left: 165, fontSize: 35}}>
-          {Math.round((num / den) * 100)}%
+          {Math.round(num / den) * 100}
         </Text>
         <View>
           {record.map(student => {
@@ -80,7 +114,7 @@ const Result = () => {
                 onLongPress={() => {
                   Alert.alert(
                     'Do you want to delete the subject',
-                    'ok',
+                    ' ',
                     [
                       {
                         text: 'Yes',
@@ -138,7 +172,7 @@ const Result = () => {
                       fontSize: 17,
                       fontWeight: '700',
                     }}>
-                    Attendance :{' '}
+                    Attendance :
                     {Math.round((student.Present / student.Total) * 100)}
                   </Text>
                   <View
@@ -154,7 +188,8 @@ const Result = () => {
                         backgroundColor: 'green',
                         borderRadius: 5,
                         marginLeft: 15,
-                      }}>
+                      }}
+                      onPress={() => handlePresent(student)}>
                       <Text
                         style={{color: 'white', fontWeight: '800', padding: 5}}>
                         Present
@@ -166,7 +201,8 @@ const Result = () => {
                         backgroundColor: 'red',
                         borderRadius: 5,
                         marginLeft: 15,
-                      }}>
+                      }}
+                      onPress={() => handleAbsent(student)}>
                       <Text
                         style={{color: 'white', fontWeight: '800', padding: 5}}>
                         Absent
