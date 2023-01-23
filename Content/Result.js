@@ -1,18 +1,26 @@
-import {View, Text, TouchableOpacity, Alert, StatusBar} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  StatusBar,
+  Modal,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import PieChart from 'react-native-pie-chart';
 import {ScrollView} from 'react-native-gesture-handler';
 import Lottie from 'lottie-react-native';
-
+import ModalView from './ModalView';
 const Result = () => {
   const [num, setNum] = useState(0);
   const [den, setDen] = useState(0);
   const [record, setRecord] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [sid, setId] = useState('');
   const handleDelete = student => {
-    console.log(student);
     firestore()
       .collection('Attendance')
       .doc(auth().currentUser.uid)
@@ -22,7 +30,6 @@ const Result = () => {
       .then(() => {
         console.log('User deleted!');
       });
-    // setLoading(true);
   };
   const getData = () => {
     let numerator = 0;
@@ -50,8 +57,29 @@ const Result = () => {
         console.log(den);
       });
   };
+  const handlePresent = student => {
+    firestore()
+      .collection('Attendance')
+      .doc(auth().currentUser.uid)
+      .collection('haajri')
+      .doc(student.id)
+      .update({
+        Present: parseInt(student.Present) + 1,
+        Total: parseInt(student.Total) + 1,
+      })
+      .then(() => {
+        console.log('User updated!');
+      });
+    setModalOpen(true);
+    setId(student.id);
+  };
+  const closeModal = () => {
+    setModalOpen(false);
+    setId('');
+  };
   const sliceColor = ['red', 'green'];
   const series = [num, den];
+
   useEffect(() => {
     getData();
   }, []);
@@ -60,7 +88,8 @@ const Result = () => {
   }
   return (
     <ScrollView>
-      <View style={{flex: 1}}>
+      <StatusBar animated={true} backgroundColor="white" />
+      <View style={{flex: 1, backgroundColor: 'white'}}>
         <PieChart
           widthAndHeight={250}
           series={series}
@@ -70,7 +99,17 @@ const Result = () => {
           coverFill={'#FFF'}
           style={{alignSelf: 'center', marginTop: 30}}
         />
-        <Text style={{position: 'absolute', top: 138, left: 165, fontSize: 35}}>
+        <Modal visible={modalOpen} animationType="fade" transparent={true}>
+          <ModalView closeModal={closeModal} userId={sid} />
+        </Modal>
+        <Text
+          style={{
+            position: 'absolute',
+            top: 138,
+            left: 165,
+            fontSize: 35,
+            color: 'black',
+          }}>
           {Math.round((num / den) * 100)}%
         </Text>
         <View>
@@ -106,7 +145,7 @@ const Result = () => {
                   backgroundColor: 'white',
                   borderRadius: 35,
 
-                  elevation: 10,
+                  elevation: 20,
 
                   alignSelf: 'center',
                   // flexDirection: 'row',
@@ -118,6 +157,8 @@ const Result = () => {
                       marginTop: 20,
                       fontSize: 20,
                       fontWeight: 'bold',
+                      fontStyle: 'italic',
+                      color: 'black',
                     }}>
                     {student.Subject}
                   </Text>
@@ -127,6 +168,8 @@ const Result = () => {
                       marginTop: 12,
                       fontSize: 17,
                       fontWeight: '700',
+                      fontStyle: 'italic',
+                      color: 'black',
                     }}>
                     Your Attendance
                     {' ' + student.Present + '/' + student.Total}
@@ -137,6 +180,8 @@ const Result = () => {
                       marginTop: 12,
                       fontSize: 17,
                       fontWeight: '700',
+                      fontStyle: 'italic',
+                      color: 'black',
                     }}>
                     Attendance :{' '}
                     {Math.round((student.Present / student.Total) * 100)}
@@ -154,6 +199,11 @@ const Result = () => {
                         backgroundColor: 'green',
                         borderRadius: 5,
                         marginLeft: 15,
+                        fontStyle: 'italic',
+                        color: 'black',
+                      }}
+                      onPress={() => {
+                        handlePresent(student);
                       }}>
                       <Text
                         style={{color: 'white', fontWeight: '800', padding: 5}}>

@@ -1,9 +1,16 @@
-import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  StatusBar,
+} from 'react-native';
 import React, {useState} from 'react';
 import {TextInput} from 'react-native-gesture-handler';
 import Lottie from 'lottie-react-native';
 import auth from '@react-native-firebase/auth';
-
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import firestore from '@react-native-firebase/firestore';
 const Home = ({navigation}) => {
   const [subject, setSubject] = useState('');
@@ -37,59 +44,114 @@ const Home = ({navigation}) => {
     console.log(present);
   };
   return (
-    <View style={{flex: 1, marginTop: 30}}>
+    <View style={{height: '100%', backgroundColor: 'white'}}>
+      <AntDesign
+        name="arrowright"
+        size={55}
+        color="white"
+        style={{
+          position: 'absolute',
+          right: 20,
+          top: 0,
+          zIndex: 1,
+          borderRadius: 50,
+          backgroundColor: 'purple',
+
+          //any of width
+          justifyContent: 'center',
+          borderRadius: 22, // it will be height/2
+        }}
+        onPress={() => {
+          navigation.navigate('Result');
+        }}
+      />
+
+      <StatusBar animated={true} backgroundColor="white" />
+
       <Lottie
         style={{alignSelf: 'center', height: 280}}
         source={require('../Images/student.json')}
         autoPlay
       />
       <View style={{marginTop: 20, marginLeft: 15}}>
-        <Text style={{fontSize: 30, fontWeight: '900'}}> Add a Subject</Text>
+        <Text style={{fontSize: 30, fontWeight: '900'}}> Add Subject</Text>
+        <AntDesign
+          name="book"
+          color="black"
+          size={35}
+          style={{position: 'absolute', top: 74, left: 17}}
+        />
         <TextInput
           style={{
-            borderWidth: 1,
+            borderBottomWidth: 1,
             width: 350,
             borderRadius: 20,
             marginTop: 25,
-
+            height: 55,
             alignItems: 'center',
-            alignContent: 'center',
+
+            left: 50,
+            width: 300,
             fontSize: 19,
+            color: 'black',
             justifyContent: 'center',
           }}
           placeholder="Subject Name"
+          placeholderTextColor="black"
           value={subject}
           onChangeText={text => setSubject(text)}></TextInput>
       </View>
       <View style={{marginTop: 20, marginLeft: 15}}>
+        <AntDesign
+          name="user"
+          color="black"
+          size={35}
+          style={{position: 'absolute', top: 15, left: 17}}
+        />
         <TextInput
           style={{
-            borderWidth: 1,
+            borderBottomWidth: 1,
             width: 350,
-            borderRadius: 20,
+            borderRadius: 15,
             marginTop: 10,
             alignItems: 'center',
-            alignContent: 'center',
+            alignItems: 'center',
+
+            left: 50,
+            width: 300,
             fontSize: 19,
+            color: 'black',
             justifyContent: 'center',
           }}
           placeholder="Total Present"
+          placeholderTextColor="black"
           value={present}
           onChangeText={text => setPresent(text)}></TextInput>
       </View>
       <View style={{marginTop: 20, marginLeft: 15}}>
+        <AntDesign
+          name="cap"
+          color="black"
+          size={35}
+          style={{position: 'absolute', top: 20, left: 17}}
+        />
         <TextInput
           style={{
-            borderWidth: 1,
+            borderBottomWidth: 1,
             width: 350,
             borderRadius: 20,
             marginTop: 10,
             alignItems: 'center',
-            alignContent: 'center',
+            alignItems: 'center',
+
+            left: 50,
+            width: 300,
             fontSize: 19,
             justifyContent: 'center',
+            color: 'black',
           }}
           placeholder="Total Classes"
+          placeholderTextColor="#000"
           value={total}
           onChangeText={text => setTotal(text)}></TextInput>
       </View>
@@ -109,7 +171,7 @@ const styles = StyleSheet.create({
     width: 380,
     alignSelf: 'center',
     borderRadius: 20,
-    margin: 10,
+    marginTop: 50,
   },
   buttonText: {
     padding: 15,

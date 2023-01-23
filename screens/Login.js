@@ -26,7 +26,7 @@ const Login = ({navigation}) => {
   };
   return (
     <>
-      <StatusBar backgroundColor="orange" />
+      <StatusBar backgroundColor="white" />
       <View style={styles.container}>
         <Image
           style={styles.tinyLogo}
@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   signup: {
     marginTop: 5,
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 20,
     alignText: 'center',
+    color: 'black',
   },
   form: {
     margin: 20,
@@ -101,6 +103,7 @@ const styles = StyleSheet.create({
     fontSize: 45,
     fontWeight: '900',
     marginLeft: 20,
+    color: 'black',
   },
   tinyLogo: {
     alignSelf: 'center',
