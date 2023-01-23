@@ -11,6 +11,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import PieChart from 'react-native-pie-chart';
 import {ScrollView} from 'react-native-gesture-handler';
+import {firebase} from '@react-native-firebase/firestore';
 import Lottie from 'lottie-react-native';
 import ModalView from './ModalView';
 const Result = () => {
@@ -18,8 +19,6 @@ const Result = () => {
   const [den, setDen] = useState(0);
   const [record, setRecord] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [sid, setId] = useState('');
   const handleDelete = student => {
     firestore()
       .collection('Attendance')
@@ -30,11 +29,12 @@ const Result = () => {
       .then(() => {
         console.log('User deleted!');
       });
+    // setLoading(true);
   };
-  const getData = () => {
-    let numerator = 0;
-    let denominator = 0;
 
+  const getData = () => {
+    numerator = 0;
+    let denominator = 0;
     firestore()
       .collection('Attendance')
       .doc(auth().currentUser.uid)
@@ -51,31 +51,8 @@ const Result = () => {
         setDen(denominator);
 
         setRecord(data);
-
         setLoading(false);
-        console.log(num);
-        console.log(den);
       });
-  };
-  const handlePresent = student => {
-    firestore()
-      .collection('Attendance')
-      .doc(auth().currentUser.uid)
-      .collection('haajri')
-      .doc(student.id)
-      .update({
-        Present: parseInt(student.Present) + 1,
-        Total: parseInt(student.Total) + 1,
-      })
-      .then(() => {
-        console.log('User updated!');
-      });
-    setModalOpen(true);
-    setId(student.id);
-  };
-  const closeModal = () => {
-    setModalOpen(false);
-    setId('');
   };
   const sliceColor = ['red', 'green'];
   const series = [num, den];
@@ -86,6 +63,7 @@ const Result = () => {
   if (loading) {
     return <Lottie source={require('../Images/loader.json')} autoPlay />;
   }
+  console.log(num, den);
   return (
     <ScrollView>
       <StatusBar animated={true} backgroundColor="white" />
@@ -99,17 +77,7 @@ const Result = () => {
           coverFill={'#FFF'}
           style={{alignSelf: 'center', marginTop: 30}}
         />
-        <Modal visible={modalOpen} animationType="fade" transparent={true}>
-          <ModalView closeModal={closeModal} userId={sid} />
-        </Modal>
-        <Text
-          style={{
-            position: 'absolute',
-            top: 138,
-            left: 165,
-            fontSize: 35,
-            color: 'black',
-          }}>
+        <Text style={{position: 'absolute', top: 138, left: 165, fontSize: 35}}>
           {Math.round((num / den) * 100)}%
         </Text>
         <View>
@@ -119,7 +87,7 @@ const Result = () => {
                 onLongPress={() => {
                   Alert.alert(
                     'Do you want to delete the subject',
-                    'ok',
+                    ' ',
                     [
                       {
                         text: 'Yes',
@@ -183,7 +151,7 @@ const Result = () => {
                       fontStyle: 'italic',
                       color: 'black',
                     }}>
-                    Attendance :{' '}
+                    Attendance :
                     {Math.round((student.Present / student.Total) * 100)}
                   </Text>
                   <View
@@ -199,11 +167,6 @@ const Result = () => {
                         backgroundColor: 'green',
                         borderRadius: 5,
                         marginLeft: 15,
-                        fontStyle: 'italic',
-                        color: 'black',
-                      }}
-                      onPress={() => {
-                        handlePresent(student);
                       }}>
                       <Text
                         style={{color: 'white', fontWeight: '800', padding: 5}}>
@@ -216,7 +179,8 @@ const Result = () => {
                         backgroundColor: 'red',
                         borderRadius: 5,
                         marginLeft: 15,
-                      }}>
+                      }}
+                      onPress={() => handleAbsent(student)}>
                       <Text
                         style={{color: 'white', fontWeight: '800', padding: 5}}>
                         Absent

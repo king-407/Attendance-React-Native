@@ -40,9 +40,8 @@ const Home = ({navigation}) => {
     } catch (error) {
       console.log(error);
     }
-
-    console.log(present);
   };
+
   return (
     <View style={{height: '100%', backgroundColor: 'white'}}>
       <AntDesign
