@@ -19,6 +19,8 @@ const Result = () => {
   const [den, setDen] = useState(0);
   const [record, setRecord] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModaOpen] = useState(false);
+  const [sid, setId] = useState('');
   const handleDelete = student => {
     firestore()
       .collection('Attendance')
@@ -29,9 +31,24 @@ const Result = () => {
       .then(() => {
         console.log('User deleted!');
       });
-    // setLoading(true);
+    setLoading(true);
   };
-
+  const handlePresent = student => {
+    firestore()
+      .collection('Attendance')
+      .doc(auth().currentUser.uid)
+      .collection('haajri')
+      .doc(student.id)
+      .update({
+        Present: parseInt(student.Present) + 1,
+        Total: parseInt(student.Total) + 1,
+      })
+      .then(() => {
+        console.log('User deleted!');
+      });
+    setModaOpen(true);
+    setId(student.id);
+  };
   const getData = () => {
     numerator = 0;
     let denominator = 0;
@@ -56,7 +73,10 @@ const Result = () => {
   };
   const sliceColor = ['red', 'green'];
   const series = [num, den];
-
+  const closeModal = () => {
+    setModaOpen(false);
+    setId(' ');
+  };
   useEffect(() => {
     getData();
   }, []);
@@ -68,6 +88,9 @@ const Result = () => {
     <ScrollView>
       <StatusBar animated={true} backgroundColor="white" />
       <View style={{flex: 1, backgroundColor: 'white'}}>
+        <Modal visible={modalOpen} animationType="fade" transparent={true}>
+          <ModalView closeModal={closeModal} userId={sid} />
+        </Modal>
         <PieChart
           widthAndHeight={250}
           series={series}
@@ -167,6 +190,9 @@ const Result = () => {
                         backgroundColor: 'green',
                         borderRadius: 5,
                         marginLeft: 15,
+                      }}
+                      onPress={() => {
+                        handlePresent(student);
                       }}>
                       <Text
                         style={{color: 'white', fontWeight: '800', padding: 5}}>
